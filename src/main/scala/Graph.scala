@@ -75,26 +75,26 @@ class Graph(val adjList: Map[Int, List[ConnectedNode]]) {
    * For a given k, it prepares 3 dimensional array in bottom-up manner which provides possible number of paths for a given
    * level/hop from source to destination
    *
-   * @param k level/hop
+   * @param maxHop max level/hop
    * @return 3-d array representing possible ways from source to destination for a given hop
    */
-  private def countHops(k: Int): Array[Array[Array[Int]]] = {
-    val count = Array.fill(numberOfNodes, numberOfNodes, k + 1)(0)
+  private def countHops(maxHop: Int): Array[Array[Array[Int]]] = {
+    val count = Array.fill(numberOfNodes, numberOfNodes, maxHop + 1)(0)
 
     for {
-      e <- 0 to k
-      i <- 0 until numberOfNodes
-      j <- 0 until numberOfNodes
+      hop <- 0 to maxHop
+      row <- 0 until numberOfNodes
+      column <- 0 until numberOfNodes
     } {
-      count(i)(j)(e) = 0
+      count(row)(column)(hop) = 0
 
-      if (e == 0 && i == j)
-        count(i)(j)(e) = 1
-      else if (e == 1 && adjMatrix(i)(j) != 0)
-        count(i)(j)(e) = 1
-      else if (e > 1)
-        for (a <- 0 until numberOfNodes if adjMatrix(i)(a) != 0)
-          count(i)(j)(e) += count(a)(j)(e - 1)
+      if (hop == 0 && row == column)
+        count(row)(column)(hop) = 1
+      else if (hop == 1 && adjMatrix(row)(column) != 0)
+        count(row)(column)(hop) = 1
+      else if (hop > 1)
+        for (a <- 0 until numberOfNodes if adjMatrix(row)(a) != 0)
+          count(row)(column)(hop) += count(a)(column)(hop - 1)
     }
 
     count
